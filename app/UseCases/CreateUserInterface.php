@@ -7,9 +7,5 @@ use App\Models\User;
 
 interface CreateUserInterface
 {
-    /**
-     * @param UserCreateRequest $userValidated
-     * @return User
-    */
-    public function execute(UserCreateRequest $userValidated): User;
+    public function execute(UserCreateRequest $userValidated): ?User;
 }

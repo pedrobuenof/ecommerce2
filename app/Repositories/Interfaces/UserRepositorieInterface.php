@@ -2,11 +2,9 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Http\Requests\UserCreateRequest;
-use App\Models\User;
+use App\Repositories\Interfaces\BaseRepositoryInterface;
 
-interface UserRepositorieInterface
+interface UserRepositorieInterface extends BaseRepositoryInterface
 {
-    public function createUser(UserCreateRequest $userValidated): User;
-    
+
 }

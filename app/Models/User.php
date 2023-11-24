@@ -15,14 +15,5 @@ class User extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'email', 'password'];
     protected $hidden = ['password'];
-
-    public function getNomeAttribute()
-    {
-        return ucfirst($this->attributes['name']);
-    }
-
-    public function setpasswordAttribute($password)
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
+    
 }

@@ -1,7 +1,10 @@
 <?php
-namespace app\Exception;
 
-class PermitionException extends \Exception
+namespace App\Exceptions;
+
+use Exception;
+
+class PermitionException extends Exception
 {
 
 }

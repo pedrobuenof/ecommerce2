@@ -1,7 +1,9 @@
 <?php
-namespace app\Exception;
+namespace App\Exceptions;
 
-class NullUserException extends \Exception
+use Exception;
+
+class NullUserException extends Exception
 {
 
 }

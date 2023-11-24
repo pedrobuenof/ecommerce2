@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use app\Exception\PermitionException;
-use app\Exception\NullUserException;
+use App\Exceptions\NullUserException;
 use App\Http\Requests\UserCreateRequest;
 use Illuminate\Http\Request;
 use App\UseCases\CreateUserInterface;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-
     protected CreateUserInterface $createUser;
 
-    
     public function __construct(CreateUserInterface $createUser)
     {
-
         $this->createUser = $createUser;
-    
     }
 
     /**
@@ -27,34 +24,20 @@ class UserController extends Controller
         * @
     */
     public function create(UserCreateRequest $request)
-    {
-        
+    {       
         try {
-
-            $userValidated = $request->validated();
-            //dd($userValidated);
-        
-            $user = $this->createUser->execute($userValidated);
-
-            // Verifica se existe usuário/foi criado
-            if(!$user){
-                $statusCode = 402;
-                throw new NullUserException("O usuário não foi salvo, tente novamente!", $statusCode);
-            }
+            $request->validated();                  
             
-            // Verifica se o usuário tem permissão de admin - implementação base
-            if($user->getNomeAttribute() != 'admin'){
-                $statusCode = 401;
-                throw new PermitionException("Usuário não tem permissão", $statusCode);
-            }
-
-            $statusCode = 201; 
-            return response()->json(['message' => 'Usuário criado com sucesso', 'user' => $user], $statusCode);
+            $user = $this->createUser->execute($request);
+            
+            return response()->json(['message' => 'Usuário criado com sucesso', 'user' => $user], Response::HTTP_CREATED);
 
         } catch (NullUserException $e) {
-            var_dump($e);
-        } catch (PermitionException $e) {
-            var_dump($e);
+            return response()->json(['message' => "deu errado2: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (QueryException $e)  {
+            return response()->json(['message' => "deu errado3: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return response()->json(['message' => "deu errado1: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
     }
