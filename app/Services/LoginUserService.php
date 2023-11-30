@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Exceptions\PermitionException;
 use App\Repositories\Interfaces\UserRepositorieInterface;
 use App\Trait\SessionTrait;
+use App\UseCases\LoginUserInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
-class LoginUserService
+class LoginUserService implements LoginUserInterface
 {
 
     use SessionTrait;
@@ -27,26 +29,29 @@ class LoginUserService
         $userCollection = $this->userRepository->getByAttribute('email', $userEmail)->get();
 
         if(!$userCollection){
-            throw new PermitionException("Senha ou Email não encontrados"); //devo colocar um exception here
+            throw new PermitionException("Senha ou Email não encontrados");
         }
 
         $userArray = $userCollection->toArray();
+        Log::info('aaa', $userArray);
         $userDbData = Arr::get($userArray, array_key_first($userArray));
         $userDbPassword = Arr::get($userDbData, "password");
 
-        if(!password_verify($userLoginPassword, $userDbPassword)){
-            throw new PermitionException("Senha ou Email não encontrados 2"); //devo colocar um exception here
+        
+        //!password_verify($userLoginPassword, $userDbPassword)
+        if($userLoginPassword != $userDbPassword){
+            throw new PermitionException("$userLoginPassword != $userDbPassword");
         }
 
         return $userDbData;
     }
 
-    public function isValid(array $loginDataValid)
+    public function isValid(array $loginDataValid): void
     {
         
         $userDbData = $this->login($loginDataValid);
 
-        if(empty($userDbData)){
+        if(!$userDbData){
             throw new PermitionException("Senha ou Email não encontrados 3");    
         }
             
