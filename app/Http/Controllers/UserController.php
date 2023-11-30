@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NullUserException;
+use App\Exceptions\PermitionException;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserCreateRequest;
 use Illuminate\Http\Request;
 use App\UseCases\CreateUserInterface;
+use App\UseCases\LoginUserInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
     protected CreateUserInterface $createUser;
+    protected LoginUserInterface $loginUser;
 
-    public function __construct(CreateUserInterface $createUser)
+    public function __construct(CreateUserInterface $createUser, LoginUserInterface $loginUser)
     {
         $this->createUser = $createUser;
+        $this->loginUser = $loginUser;
     }
 
     /**
@@ -40,5 +45,19 @@ class UserController extends Controller
             return response()->json(['message' => "deu errado1: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    public function index (LoginRequest $loginRequest)
+    {
+        try {
+            
+            $loginData = $loginRequest->validated();
+            $this->loginUser->isValid($loginData);
+
+            return response()->json(['logado!'], Response::HTTP_OK);
+
+        } catch (PermitionException $e) {
+            return response()->json(['message' => "deu errado4: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
