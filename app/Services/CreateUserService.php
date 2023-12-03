@@ -32,6 +32,10 @@ class CreateUserService implements CreateUserInterface
                 throw new PermitionException("Usuário não tem permissão", $statusCode);
             }
             */
+
+            $userValidated['password'] = bcrypt($userValidated['password']);
+            Log::info($userValidated);
+
             $user = $this->userRepository->store($userValidated);
 
             // Verifica se existe usuário/foi criado

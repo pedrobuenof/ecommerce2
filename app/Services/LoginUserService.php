@@ -33,29 +33,32 @@ class LoginUserService implements LoginUserInterface
         }
 
         $userArray = $userCollection->toArray();
-        Log::info('aaa', $userArray);
-        $userDbData = Arr::get($userArray, array_key_first($userArray));
-        $userDbPassword = Arr::get($userDbData, "password");
-
         
-        //!password_verify($userLoginPassword, $userDbPassword)
-        if($userLoginPassword != $userDbPassword){
-            throw new PermitionException("$userLoginPassword != $userDbPassword");
+        $userDbData = Arr::get($userArray, array_key_first($userArray));
+        
+        $userDbPassword = Arr::get($userDbData, "password");
+        // Log::info('c', $userDbPassword); -> Ta dando erro, acredito por que conta de que userDbData se pa não é um array, logo
+        
+        if(!password_verify($userLoginPassword, $userDbPassword)){
+            throw new PermitionException("E-mail ou senha inválidos!");
         }
 
         return $userDbData;
     }
 
-    public function isValid(array $loginDataValid): void
+    public function isValid(array $loginDataValid): array
     {
         
         $userDbData = $this->login($loginDataValid);
+        // Log::info($userDbData['password']);
 
         if(!$userDbData){
             throw new PermitionException("Senha ou Email não encontrados 3");    
         }
             
-        $this->setUserDataSession($userDbData);        
+        $this->setUserDataSession($userDbData);
+        
+        return $userDbData;
         
     }
 }

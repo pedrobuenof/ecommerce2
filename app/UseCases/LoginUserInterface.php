@@ -5,5 +5,5 @@ namespace App\UseCases;
 
 interface LoginUserInterface
 {
-    public function isValid(array $loginDataValid): void;
+    public function isValid(array $loginDataValid): array;
 }

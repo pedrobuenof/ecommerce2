@@ -52,9 +52,9 @@ class UserController extends Controller
         try {
             
             $loginData = $loginRequest->validated();
-            $this->loginUser->isValid($loginData);
+            $user = $this->loginUser->isValid($loginData);
 
-            return response()->json(['logado!'], Response::HTTP_OK);
+            return response()->json($user, Response::HTTP_OK);
 
         } catch (PermitionException $e) {
             return response()->json(['message' => "deu errado4: " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
